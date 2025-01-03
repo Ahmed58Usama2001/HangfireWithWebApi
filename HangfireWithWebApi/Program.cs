@@ -23,6 +23,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Register Services
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Register Hangfire with SQL Server
 var hangfireConnectionString = builder.Configuration.GetConnectionString("HangfireConnection");
@@ -64,8 +65,6 @@ app.UseHangfireDashboard();
 // Enable Hangfire Dashboard
 app.MapHangfireDashboard("/hangfire");
 
-// Schedule a recurring job
-RecurringJob.AddOrUpdate("my-recurring-job", () => Console.WriteLine("Hello from Hangfire!"), Cron.Daily);
 
 // Map controllers
 app.MapControllers();

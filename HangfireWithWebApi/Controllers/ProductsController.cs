@@ -1,5 +1,6 @@
 ﻿using ApplicationLayer.DTOs;
 using ApplicationLayer.Services;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HangfireWithWebApi.Controllers;
@@ -37,6 +38,13 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult> Add(ProductDto productDto)
     {
         await _productService.AddAsync(productDto);
+
+        var jobId = BackgroundJob.Enqueue<IEmailService>(x => x.SendWelcomeEmail("ahmed@gmail.com", productDto.Name));
+         Console.WriteLine(jobId);
+
+         jobId = BackgroundJob.Schedule<IEmailService>(x => x.SendGettingStartedEmail("ahmed@gmail.com", productDto.Name), TimeSpan.FromSeconds(20));
+        Console.WriteLine(jobId);
+
         return CreatedAtAction(nameof(GetById), new { id = productDto.Id }, productDto);
     }
 
